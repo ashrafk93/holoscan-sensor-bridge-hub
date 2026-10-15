@@ -84,15 +84,17 @@ def validate_profiles(parser, profiles, allow_overload):
 def run(app, hololink, device):
     """Run the application, log each stream's RESULT line, and return the exit code."""
     app.enable_metadata(True)
-    hololink.start()
     try:
-        app.run()
+        hololink.start()
+        try:
+            app.run()
+        finally:
+            hololink.stop()
     finally:
-        hololink.stop()
+        release_cuda(device)
     passed = True
     for stats, camera, frame_limit in app.streams:
         line, ok = stats.result(frame_limit, camera.stop_failed)
         logging.info(line)
         passed &= ok
-    release_cuda(device)
     return 0 if passed else 1
