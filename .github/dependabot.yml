@@ -1,6 +1,15 @@
 version: 2
 updates:
+  # Hub-owned tool requirements. Each project manages its own dependencies.
   - package-ecosystem: "pip"
-    directory: "/" # Scans the entire repository
+    directories:
+      - "/tools/lint"
+      - "/tools/metadata"
+    schedule:
+      interval: "weekly"
+  # Workflows pin actions to commit SHAs; Dependabot updates each SHA and its
+  # version comment together.
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "weekly"
